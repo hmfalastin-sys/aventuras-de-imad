@@ -1,1 +1,742 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Las Aventuras de Imad</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #38bdf8, #8b5cf6);
+  color: #172554;
+}
+
+.container {
+  width: 100%;
+  max-width: 700px;
+  margin: auto;
+  padding: 15px;
+}
+
+.card {
+  background: white;
+  border-radius: 28px;
+  padding: 22px;
+  margin-top: 15px;
+  text-align: center;
+  box-shadow: 0 12px 35px rgba(0,0,0,.25);
+}
+
+h1 {
+  font-size: 34px;
+  margin: 5px 0 10px;
+}
+
+h2 {
+  font-size: 27px;
+}
+
+.subtitulo {
+  font-size: 20px;
+}
+
+.emoji-grande {
+  font-size: 65px;
+}
+
+.menu {
+  display: grid;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.boton-mundo {
+  border: none;
+  border-radius: 22px;
+  padding: 20px 12px;
+  font-size: 21px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+}
+
+.numero {
+  background: #2563eb;
+}
+
+.aventura {
+  background: #7c3aed;
+}
+
+.natacion {
+  background: #0891b2;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.pildora {
+  background: #eef2ff;
+  padding: 10px 14px;
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.pregunta {
+  font-size: 27px;
+  font-weight: bold;
+  margin: 28px 0;
+}
+
+.respuestas {
+  display: grid;
+  gap: 12px;
+}
+
+.respuesta {
+  width: 100%;
+  border: none;
+  border-radius: 18px;
+  padding: 17px 12px;
+  font-size: 20px;
+  font-weight: bold;
+  background: #e0e7ff;
+  color: #172554;
+  cursor: pointer;
+}
+
+.respuesta:active {
+  transform: scale(.98);
+}
+
+.correcta {
+  background: #86efac !important;
+}
+
+.incorrecta {
+  background: #fca5a5 !important;
+}
+
+.mensaje {
+  min-height: 45px;
+  margin: 18px 5px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.boton {
+  border: none;
+  border-radius: 18px;
+  padding: 15px 25px;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  background: #7c3aed;
+  cursor: pointer;
+}
+
+.oculto {
+  display: none;
+}
+
+.premio {
+  font-size: 55px;
+}
+
+.estrellas {
+  font-size: 30px;
+  margin: 15px;
+}
+
+.pequeno {
+  font-size: 16px;
+  color: #64748b;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<!-- MENU -->
+
+<div id="inicio">
+
+<div class="emoji-grande">🌟</div>
+
+<h1>Las Aventuras de Imad</h1>
+
+<p class="subtitulo">
+🎮 ¡Hola, Imad! ¿Qué aventura quieres jugar?
+</p>
+
+<div class="menu">
+
+<button class="boton-mundo numero" onclick="empezar(0)">
+🔢<br>
+Mundo de los Números
+</button>
+
+<button class="boton-mundo aventura" onclick="empezar(1)">
+🍄<br>
+Mundo de Aventuras
+</button>
+
+<button class="boton-mundo natacion" onclick="empezar(2)">
+🏊<br>
+Mundo de Natación
+</button>
+
+</div>
+
+<p class="pequeno">
+¡Consigue estrellas respondiendo correctamente!
+</p>
+
+</div>
+
+
+<!-- JUEGO -->
+
+<div id="juego" class="oculto">
+
+<div id="iconoMundo" class="emoji-grande"></div>
+
+<h2 id="nombreMundo"></h2>
+
+<div class="info">
+
+<div class="pildora">
+❓ <span id="contador">1</span>/10
+</div>
+
+<div class="pildora">
+⭐ <span id="puntos">0</span>
+</div>
+
+</div>
+
+<div id="pregunta" class="pregunta"></div>
+
+<div id="respuestas" class="respuestas"></div>
+
+<div id="mensaje" class="mensaje"></div>
+
+<button id="siguiente" class="boton oculto">
+Siguiente ➜
+</button>
+
+</div>
+
+
+<!-- FINAL -->
+
+<div id="final" class="oculto">
+
+<div class="premio">🏆</div>
+
+<h1>¡Bravo, Imad!</h1>
+
+<h2 id="resultado"></h2>
+
+<div id="estrellas" class="estrellas"></div>
+
+<p id="comentario" class="subtitulo"></p>
+
+<button class="boton" onclick="volverInicio()">
+🏠 Volver al menú
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+var mundos = [
+
+/* =========================
+   NUMEROS
+========================= */
+
+{
+nombre: "Mundo de los Números",
+icono: "🔢",
+
+preguntas: [
+
+{
+q: "¿Cuánto es 5 + 3?",
+a: ["6", "7", "8", "9"],
+c: 2
+},
+
+{
+q: "¿Cuánto es 10 - 4?",
+a: ["5", "6", "7", "8"],
+c: 1
+},
+
+{
+q: "¿Cuánto es 3 × 2?",
+a: ["5", "6", "7", "8"],
+c: 1
+},
+
+{
+q: "¿Qué número viene después del 19?",
+a: ["18", "20", "21", "29"],
+c: 1
+},
+
+{
+q: "¿Cuánto es 7 + 6?",
+a: ["11", "12", "13", "14"],
+c: 2
+},
+
+{
+q: "¿Cuál es el número mayor?",
+a: ["12", "8", "15", "10"],
+c: 2
+},
+
+{
+q: "¿Cuánto es 20 - 7?",
+a: ["11", "12", "13", "14"],
+c: 2
+},
+
+{
+q: "¿Cuánto es 4 × 3?",
+a: ["10", "11", "12", "13"],
+c: 2
+},
+
+{
+q: "Tienes 5 monedas y ganas 4. ¿Cuántas tienes?",
+a: ["8", "9", "10", "11"],
+c: 1
+},
+
+{
+q: "¿Cuánto es 15 + 5?",
+a: ["18", "19", "20", "21"],
+c: 2
+}
+
+]
+},
+
+
+/* =========================
+   AVENTURAS
+========================= */
+
+{
+nombre: "Mundo de Aventuras",
+icono: "🍄",
+
+preguntas: [
+
+{
+q: "¿Qué hacemos para superar un obstáculo?",
+a: ["Saltar", "Dormir", "Llorar", "Escondernos"],
+c: 0
+},
+
+{
+q: "¿Qué podemos recoger para ganar puntos?",
+a: ["Monedas", "Calcetines", "Cucharas", "Piedras"],
+c: 0
+},
+
+{
+q: "¿Qué suele haber al final de un nivel?",
+a: ["Una recompensa", "Una lavadora", "Una cama", "Una nevera"],
+c: 0
+},
+
+{
+q: "¿Cuál de estos es un animal?",
+a: ["Gato", "Robot", "Coche", "Avión"],
+c: 0
+},
+
+{
+q: "¿Qué protege nuestra cabeza?",
+a: ["Casco", "Zapato", "Calcetín", "Cuchara"],
+c: 0
+},
+
+{
+q: "¿Qué hacemos para resolver un acertijo?",
+a: ["Pensar", "Dormir", "Correr", "Gritar"],
+c: 0
+},
+
+{
+q: "¿Cuál puede ser un premio?",
+a: ["Una estrella", "Basura", "Una piedra", "Un calcetín"],
+c: 0
+},
+
+{
+q: "¿Qué podemos encontrar en una aventura?",
+a: ["Un tesoro", "Una lavadora", "Una nevera", "Una cama"],
+c: 0
+},
+
+{
+q: "¿Qué hace un buen héroe ante un problema?",
+a: ["Intenta resolverlo", "Se rinde", "Se duerme", "Sale corriendo"],
+c: 0
+},
+
+{
+q: "¿Cómo es una aventura divertida?",
+a: ["Emocionante", "Aburrida", "Triste", "Dormida"],
+c: 0
+}
+
+]
+},
+
+
+/* =========================
+   NATACION
+========================= */
+
+{
+nombre: "Mundo de Natación",
+icono: "🏊",
+
+preguntas: [
+
+{
+q: "¿Dónde nadamos normalmente?",
+a: ["Piscina", "Desierto", "Montaña", "Cueva"],
+c: 0
+},
+
+{
+q: "¿Qué usamos para ver bajo el agua?",
+a: ["Gafas de natación", "Zapatos", "Sombrero", "Guantes"],
+c: 0
+},
+
+{
+q: "¿Cuál de estos animales vive en el agua?",
+a: ["Delfín", "León", "Gato", "Caballo"],
+c: 0
+},
+
+{
+q: "¿Qué debemos hacer en una piscina?",
+a: ["Seguir las normas", "Correr", "Empujar", "Gritar"],
+c: 0
+},
+
+{
+q: "¿Qué usamos mucho para nadar?",
+a: ["Brazos", "Orejas", "Pelo", "Nariz"],
+c: 0
+},
+
+{
+q: "¿Cuál de estos animales nada?",
+a: ["Tiburón", "Gallina", "Jirafa", "Conejo"],
+c: 0
+},
+
+{
+q: "¿Qué hay dentro de una piscina?",
+a: ["Agua", "Arena", "Fuego", "Tierra"],
+c: 0
+},
+
+{
+q: "Si estamos cansados nadando, ¿qué hacemos?",
+a: ["Descansamos", "Nadamos más rápido", "Corremos", "Saltamos"],
+c: 0
+},
+
+{
+q: "¿Cuál tiene aletas?",
+a: ["Pez", "Perro", "Elefante", "Gato"],
+c: 0
+},
+
+{
+q: "¿Qué palabra está relacionada con nadar?",
+a: ["Agua", "Desierto", "Fuego", "Arena"],
+c: 0
+}
+
+]
+}
+
+];
+
+
+var mundoActual = 0;
+var preguntaActual = 0;
+var puntos = 0;
+var bloqueado = false;
+
+
+function empezar(numero) {
+
+mundoActual = numero;
+preguntaActual = 0;
+puntos = 0;
+
+document.getElementById("inicio").classList.add("oculto");
+
+document.getElementById("final").classList.add("oculto");
+
+document.getElementById("juego").classList.remove("oculto");
+
+document.getElementById("nombreMundo").textContent =
+mundos[numero].nombre;
+
+document.getElementById("iconoMundo").textContent =
+mundos[numero].icono;
+
+mostrarPregunta();
+
+}
+
+
+function mostrarPregunta() {
+
+bloqueado = false;
+
+var datos =
+mundos[mundoActual].preguntas[preguntaActual];
+
+document.getElementById("contador").textContent =
+preguntaActual + 1;
+
+document.getElementById("puntos").textContent =
+puntos;
+
+document.getElementById("pregunta").textContent =
+datos.q;
+
+document.getElementById("mensaje").textContent = "";
+
+document.getElementById("siguiente").classList.add("oculto");
+
+var caja =
+document.getElementById("respuestas");
+
+caja.innerHTML = "";
+
+
+for (
+var i = 0;
+i < datos.a.length;
+i++
+) {
+
+var boton =
+document.createElement("button");
+
+boton.className = "respuesta";
+
+boton.textContent = datos.a[i];
+
+boton.setAttribute(
+"data-numero",
+i
+);
+
+boton.onclick = function() {
+
+responder(
+parseInt(
+this.getAttribute("data-numero")
+),
+this
+);
+
+};
+
+caja.appendChild(boton);
+
+}
+
+}
+
+
+function responder(numero, boton) {
+
+if (bloqueado) {
+return;
+}
+
+bloqueado = true;
+
+var datos =
+mundos[mundoActual].preguntas[preguntaActual];
+
+var botones =
+document.querySelectorAll(".respuesta");
+
+
+for (
+var i = 0;
+i < botones.length;
+i++
+) {
+botones[i].disabled = true;
+}
+
+
+if (numero === datos.c) {
+
+puntos++;
+
+boton.classList.add("correcta");
+
+document.getElementById("mensaje").textContent =
+"🎉 ¡CORRECTO! ¡Muy bien, Imad! ⭐";
+
+}
+
+else {
+
+boton.classList.add("incorrecta");
+
+botones[datos.c].classList.add("correcta");
+
+document.getElementById("mensaje").textContent =
+"💡 ¡Casi! ¡Vamos a por la siguiente!";
+
+}
+
+
+document.getElementById("puntos").textContent =
+puntos;
+
+document.getElementById("siguiente").classList.remove("oculto");
+
+}
+
+
+document.getElementById("siguiente").onclick =
+function() {
+
+preguntaActual++;
+
+if (
+preguntaActual <
+mundos[mundoActual].preguntas.length
+) {
+
+mostrarPregunta();
+
+}
+
+else {
+
+terminar();
+
+}
+
+};
+
+
+function terminar() {
+
+document.getElementById("juego").classList.add("oculto");
+
+document.getElementById("final").classList.remove("oculto");
+
+document.getElementById("resultado").textContent =
+"Has conseguido " + puntos + " de 10";
+
+
+var estrellas = "";
+
+for (
+var i = 0;
+i < puntos;
+i++
+) {
+estrellas += "⭐";
+}
+
+document.getElementById("estrellas").textContent =
+estrellas;
+
+
+var mensajeFinal;
+
+if (puntos === 10) {
+
+mensajeFinal =
+"🤩 ¡PERFECTO, IMAD! ¡Eres un campeón!";
+
+}
+
+else if (puntos >= 8) {
+
+mensajeFinal =
+"🚀 ¡INCREÍBLE! ¡Sabes muchísimo!";
+
+}
+
+else if (puntos >= 5) {
+
+mensajeFinal =
+"🌟 ¡Muy bien! ¡Sigue practicando!";
+
+}
+
+else {
+
+mensajeFinal =
+"💪 ¡Buen intento! ¡Vamos a jugar otra vez!";
+
+}
+
+document.getElementById("comentario").textContent =
+mensajeFinal;
+
+}
+
+
+function volverInicio() {
+
+document.getElementById("final").classList.add("oculto");
+
+document.getElementById("inicio").classList.remove("oculto");
+
+}
+
+</script>
+
+</body>
+</html>
